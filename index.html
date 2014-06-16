@@ -105,27 +105,32 @@ onload="if(submitted) {window.location='http://cdb.io/SyJUNU';}"></iframe>
 	  // Set default location in case the IP doesn't have one
 	  var y = 40.8;
 	  var x = -96.67;
+
 	  // Grab IP location from freegeoip API
+	  // Ignore it if the API is down (it's down a LOT)
 	  $.ajax( { 
 		  url: '//freegeoip.net/json/', 
 		  type: 'POST', 
 		  dataType: 'jsonp',
 		  success: function(json) {
-	    if (json) {
-	      y = json.latitude;
-	      x = json.longitude;
-	    }
-	    // Build the map
-	    var map = L.mapbox.map('map', 'landplanner.ifnhcmb0', {scrollWheelZoom:false}).setView([y, x], 9);
+		    if (json) {
+		      y = json.latitude;
+		      x = json.longitude;
+		    }
+		  }
+		});
 
-	    // Set form lat/lon fields from map center location
-	    $('.questionlat').attr('value', y);
-        $('.questionlon').attr('value', x);
+    // Build the map
+    var map = L.mapbox.map('map', 'landplanner.ifnhcmb0', {scrollWheelZoom:false}).setView([y, x], 4);
 
-        // Update these values as the map gets dragged around
-        map.on('moveend', function(event) {
-		  	$('.questionlat').attr('value', map.getCenter().lat);
-        	$('.questionlon').attr('value', map.getCenter().lng);
+    // Set form lat/lon fields from map center location
+    $('.questionlat').attr('value', y);
+      $('.questionlon').attr('value', x);
+
+      // Update these values as the map gets dragged around
+      map.on('moveend', function(event) {
+	  	$('.questionlat').attr('value', map.getCenter().lat);
+      	$('.questionlon').attr('value', map.getCenter().lng);
 		});
 
 		// Set the question choice active
@@ -136,8 +141,6 @@ onload="if(submitted) {window.location='http://cdb.io/SyJUNU';}"></iframe>
 		  	$('.question1').attr('value', $.trim($(this).text()));
 		});
 
-	  }
-	});
 </script>
 </body>
 </html>
